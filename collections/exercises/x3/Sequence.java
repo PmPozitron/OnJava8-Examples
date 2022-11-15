@@ -1,4 +1,4 @@
-package exercises.three;
+package exercises.x3;
 
 // innerclasses/Sequence.java
 // (c)2021 MindView LLC: see Copyright.txt
@@ -6,10 +6,7 @@ package exercises.three;
 // Visit http://OnJava8.com for more book information.
 // Holds a sequence of Objects
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 interface Selector {
     boolean end();

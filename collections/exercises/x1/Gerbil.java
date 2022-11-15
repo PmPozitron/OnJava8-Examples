@@ -1,4 +1,4 @@
-package exercises.one;
+package exercises.x1;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
