@@ -23,9 +23,7 @@ public class Vowels {
                     if (processedWords.containsKey(word)) {
                         HashMap<Character, Integer> currentValue = processedWords.get(word);
                         currentValue.entrySet().stream()
-                                .forEach(item -> {
-                                    countMap.merge(item.getKey(), item.getValue(), (current, more) -> current + more);
-                                });
+                                .forEach(item -> countMap.merge(item.getKey(), item.getValue(), (current, more) -> current + more));
                         continue;
                     }
                     for (char c : word.toLowerCase().toCharArray()) {
@@ -36,9 +34,7 @@ public class Vowels {
 
                             processedWords.merge(word, newStatsForWord, (old, aNew) -> {
                                 aNew.entrySet().stream()
-                                        .forEach(entry ->
-                                                old.merge(entry.getKey(), aNew.get(entry.getKey()), (current, someMore) -> current + someMore)
-                                        );
+                                        .forEach(entry -> old.merge(entry.getKey(), aNew.get(entry.getKey()), (current, someMore) -> current + someMore));
                                 return old;
                             });
                         }
