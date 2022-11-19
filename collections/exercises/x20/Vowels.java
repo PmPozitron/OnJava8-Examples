@@ -15,13 +15,10 @@ public class Vowels {
         List<String> lines = Files.readAllLines(Paths.get("collections/SetOperations.java"));
 //        List<String> lines = getSeveralAlphabetStrings(5);
         HashMap<Character, Integer> countMap = new HashMap<>();
-        HashMap<Character, Integer> wordMap = new HashMap<>();
         HashMap<String, HashMap<Character, Integer>> processedWords = new HashMap<>();
 
         for (String line : lines) {
             for (String word : line.split("\\W+")) {
-                wordMap.clear();
-
                 if (word.trim().length() > 0) {
                     if (processedWords.containsKey(word)) {
                         HashMap<Character, Integer> currentValue = processedWords.get(word);
@@ -34,13 +31,18 @@ public class Vowels {
                     for (char c : word.toLowerCase().toCharArray()) {
                         if (characters.contains(c)) {
                             countMap.merge(c, 1, (fist, second) -> fist + second);
-                            wordMap.merge(c, 1, (fist, second) -> fist + second);
+                            HashMap<Character, Integer> newStatsForWord = new HashMap<>();
+                            newStatsForWord.merge(c, 1, (fist, second) -> fist + second);
+
+                            processedWords.merge(word, newStatsForWord, (old, aNew) -> {
+                                aNew.entrySet().stream()
+                                        .forEach(entry ->
+                                                old.merge(entry.getKey(), aNew.get(entry.getKey()), (current, someMore) -> current + someMore)
+                                        );
+                                return old;
+                            });
                         }
                     }
-                    processedWords.put(word, new HashMap<>(wordMap));
-                }
-                if (!wordMap.isEmpty()) {
-                    System.out.println(word + " " + wordMap);
                 }
             }
         }
