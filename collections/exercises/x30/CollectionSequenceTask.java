@@ -145,7 +145,6 @@ public class CollectionSequenceTask implements Collection<String> {
         currentSize = 0;
     }
 
-
     public static void main(String[] args) {
         CollectionSequenceTask c = new CollectionSequenceTask(100);
         Random rnd = new Random();
