@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-public class x1 {
+public class X1 {
     public static void main(String[] args) {
         Random rnd = new Random();
         Supplier<List<Map.Entry<String, String>>> linkedListSupplier = LinkedList::new;
