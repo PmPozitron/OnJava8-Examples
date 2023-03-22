@@ -1,4 +1,4 @@
-package exercises.x16.bybruce;
+package exercises.x16_x17.bybruce;
 
 import exercises.x5.CountingMapData;
 
