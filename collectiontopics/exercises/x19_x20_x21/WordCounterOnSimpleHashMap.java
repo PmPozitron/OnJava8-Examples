@@ -1,4 +1,4 @@
-package exercises.x19;
+package exercises.x19_x20_x21;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,12 +7,10 @@ import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WordCounterOnSimpleHashMap {
     public static void main(String[] args) throws IOException {
@@ -44,6 +42,12 @@ class SimpleHashMap<K, V> extends AbstractMap<K, V> {
         int index = Math.abs(key.hashCode()) % SIZE;
         if (buckets[index] == null)
             buckets[index] = new LinkedList<>();
+        else if (! buckets[index].stream()
+            .filter(item -> item.getKey().equals(key))
+            .findAny()
+            .isPresent()){
+            System.out.printf("key's '%s' hash '%d' collided with '%d' elements in this map\n", key, index, buckets[index].size());
+        }
         LinkedList<MapEntry<K, V>> bucket = buckets[index];
         MapEntry<K, V> pair = new MapEntry<>(key, value);
         boolean found = false;
@@ -67,9 +71,14 @@ class SimpleHashMap<K, V> extends AbstractMap<K, V> {
         int index = Math.abs(key.hashCode()) % SIZE;
         if (buckets[index] == null)
             return null;
-        for (MapEntry<K, V> iPair : buckets[index])
-            if (iPair.getKey().equals(key))
+        int counter = 0;
+        for (MapEntry<K, V> iPair : buckets[index]) {
+            if (iPair.getKey().equals(key)) {
+                System.out.printf("took '%d' steps to find item by key '%s'\n", counter, key);
                 return iPair.getValue();
+            }
+            counter++;
+        }
         return null;
     }
 
