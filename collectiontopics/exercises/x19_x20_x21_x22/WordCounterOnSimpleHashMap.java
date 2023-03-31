@@ -1,4 +1,4 @@
-package exercises.x19_x20_x21;
+package exercises.x19_x20_x21_x22;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,14 +6,21 @@ import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 public class WordCounterOnSimpleHashMap {
     public static void main(String[] args) throws IOException {
+        testRemoveAndClear();
+    }
+
+    private static void countWords() throws IOException {
         SimpleHashMap<String, Integer> map = new SimpleHashMap<>();
         Files.readAllLines(Paths.get("collections/SetOperations.java"))
             .stream()
@@ -22,6 +29,26 @@ public class WordCounterOnSimpleHashMap {
             .forEach(word -> {
                 map.merge(word, 1, (anOld, aNew) -> anOld + aNew);
             });
+        System.out.println(map);
+    }
+
+    private static void testRemoveAndClear() {
+        int size = 50;
+        SimpleHashMap<Integer, String> map = new SimpleHashMap<>();
+        IntStream.range(0, size).forEach(i -> map.put(i, UUID.randomUUID().toString()));
+        System.out.println(map);
+        int index = (int)(Math.random() * size);
+        System.out.println("index " + index);
+        map.remove(index);
+        System.out.println("===");
+        System.out.println(map);
+        map.put(index, UUID.randomUUID().toString());
+        System.out.println("===");
+        System.out.println(map);
+        map.remove(index);
+        System.out.println(map);
+        System.out.println("===");
+        map.clear();
         System.out.println(map);
     }
 }
@@ -92,6 +119,27 @@ class SimpleHashMap<K, V> extends AbstractMap<K, V> {
                 set.add(mpair);
         }
         return set;
+    }
+
+    @Override
+    public V remove(Object key) {
+        int index = Math.abs(key.hashCode()) % SIZE;
+        if (buckets[index] == null)
+            return null;
+
+        for (Iterator<MapEntry<K,V>> iterator = buckets[index].iterator(); iterator.hasNext();) {
+            MapEntry<K, V> entry = iterator.next();
+            if (entry.getKey().equals(key)) {
+                iterator.remove();
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void clear() {
+        buckets = new LinkedList[SIZE];
     }
 }
 class MapEntry<K, V> implements Map.Entry<K, V> {
