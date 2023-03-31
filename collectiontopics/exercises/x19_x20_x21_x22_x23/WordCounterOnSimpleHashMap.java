@@ -1,4 +1,4 @@
-package exercises.x19_x20_x21_x22;
+package exercises.x19_x20_x21_x22_x23;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +18,7 @@ import java.util.stream.IntStream;
 
 public class WordCounterOnSimpleHashMap {
     public static void main(String[] args) throws IOException {
-        testRemoveAndClear();
+        testRestOfMapInterface();
     }
 
     private static void countWords() throws IOException {
@@ -49,6 +50,25 @@ public class WordCounterOnSimpleHashMap {
         System.out.println(map);
         System.out.println("===");
         map.clear();
+        System.out.println(map);
+    }
+
+    private static void testRestOfMapInterface() {
+        SimpleHashMap<Integer, UUID> map = new SimpleHashMap<>();
+        IntStream.range(0, 10)
+            .forEach(i -> map.put(i, UUID.randomUUID()));
+        System.out.println(map.size());
+        System.out.println(map.isEmpty());
+
+        UUID uuid = UUID.randomUUID();
+        System.out.println(uuid.toString() + " is present: " + map.containsValue(uuid));
+        uuid = map.get(5);
+        System.out.println(uuid.toString() + " is present: " + map.containsValue(uuid));
+        System.out.println(map.containsKey(15));
+        System.out.println(map.containsKey(5));
+        map.clear();
+        System.out.println(map.isEmpty());
+        map.putAll(Map.of(1, UUID.randomUUID(), 2, UUID.randomUUID()));
         System.out.println(map);
     }
 }
@@ -140,6 +160,48 @@ class SimpleHashMap<K, V> extends AbstractMap<K, V> {
     @Override
     public void clear() {
         buckets = new LinkedList[SIZE];
+    }
+
+    @Override
+    public int size() {
+        return Arrays.stream(buckets).filter(Objects::nonNull).mapToInt(bucket -> bucket.size()).sum();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return ! Arrays.stream(buckets)
+            .filter(Objects::nonNull)
+            .filter(bucket -> !bucket.isEmpty())
+            .findAny()
+            .isPresent();
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return Arrays.stream(buckets)
+            .filter(Objects::nonNull)
+            .flatMap(bucket -> bucket.stream())
+            .filter(entry -> (
+                entry.getValue() == null && value == null) ||
+                entry.getValue().equals(value))
+            .findAny()
+            .isPresent();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return Arrays.stream(buckets)
+            .filter(Objects::nonNull)
+
+            .flatMap(List::stream)
+            .filter(entry -> entry.getKey().equals(key))
+            .findAny()
+            .isPresent();
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> m) {
+        m.entrySet().stream().forEach(entry -> put(entry.getKey(), entry.getValue()));
     }
 }
 class MapEntry<K, V> implements Map.Entry<K, V> {
